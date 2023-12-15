@@ -14,12 +14,17 @@ import traceback
 
 logger = decky_plugin.logger
 
+std_out_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-out.log", "w")
+std_err_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-err.log", "w")
+
 class Plugin:
     # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
 
     async def kdeconnect_runner(self):
+        await asyncio.sleep(5)
         decky_plugin.logger.info("KDE Connecter started")
         last_display = None
+        proc = None
         while True:
             try:
                 decky_plugin.logger.info("in loop")
@@ -30,6 +35,7 @@ class Plugin:
                     if "GAMESCOPE_FOCUSED_APP(CARDINAL)" in line:
                         app_id = line.split(" = ")[1]
 
+                decky_plugin.logger.info(f"app id {app_id}")
                 if app_id is None:
                     await asyncio.sleep(0.5)
                     continue
@@ -39,13 +45,13 @@ class Plugin:
 
                 if display != last_display:
                     last_display = display
-                    logger.info(f"Starting KDE connect on DISPLAY {last_display}")
-                    env = os.environ.copy()
-                    env["DISPLAY"] = last_display
+                    # env = os.environ.copy()
                     ret = subprocess.run(["pkill","kdeconnectd"])
-                    subprocess.Popen(["/usr/lib/kdeconnectd", "--replace", "&"], env=env, close_fds=True)
+                    proc = subprocess.Popen(["/home/deck/run_kde_connect.sh", display, "&"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    logger.info(proc)
+                    logger.info(f"Starting KDE connect on DISPLAY {last_display}")
             except Exception:
-                decky_plugin.logger.info("watchdog")
+                logger.info(traceback.format_exc())
             await asyncio.sleep(0.5)
 
     async def _main(self):
