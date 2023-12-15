@@ -10,22 +10,19 @@ import sys
 import shutil
 import time
 import asyncio
+import traceback
 
-try:
-    sys.path = [str(DEPSPATH / "psutil")] + sys.path
-    import psutil
-
-    logger.info("Successfully loaded psutil")
-except Exception:
-    logger.info(traceback.format_exc())
+logger = decky_plugin.logger
 
 class Plugin:
     # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
 
     async def kdeconnect_runner(self):
         decky_plugin.logger.info("KDE Connecter started")
+        last_display = None
         while True:
             try:
+                decky_plugin.logger.info("in loop")
                 display = ":0"
                 ret = subprocess.run(["xprop","-d",":0","-root"], capture_output=True)
                 app_id = None
@@ -34,7 +31,7 @@ class Plugin:
                         app_id = line.split(" = ")[1]
 
                 if app_id is None:
-                    time.sleep(1)
+                    await asyncio.sleep(0.5)
                     continue
 
                 if app_id != "769":
@@ -42,13 +39,13 @@ class Plugin:
 
                 if display != last_display:
                     last_display = display
-                    print(f"Starting KDE connect on DISPLAY {last_display}")
+                    logger.info(f"Starting KDE connect on DISPLAY {last_display}")
                     env = os.environ.copy()
                     env["DISPLAY"] = last_display
                     ret = subprocess.run(["pkill","kdeconnectd"])
                     subprocess.Popen(["/usr/lib/kdeconnectd", "--replace", "&"], env=env, close_fds=True)
             except Exception:
-                decky_plugin.logger.exception("watchdog")
+                decky_plugin.logger.info("watchdog")
             await asyncio.sleep(0.5)
 
     async def _main(self):
