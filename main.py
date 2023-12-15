@@ -18,16 +18,14 @@ std_out_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-out.log", "w"
 std_err_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-err.log", "w")
 
 class Plugin:
-    # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
-
     async def kdeconnect_runner(self):
         await asyncio.sleep(5)
         decky_plugin.logger.info("KDE Connecter started")
+        script_path = str(Path(decky_plugin.DECKY_PLUGIN_DIR) / "run_kde_connect.sh")
         last_display = None
         proc = None
         while True:
             try:
-                decky_plugin.logger.info("in loop")
                 display = ":0"
                 ret = subprocess.run(["xprop","-d",":0","-root"], capture_output=True)
                 app_id = None
@@ -47,9 +45,9 @@ class Plugin:
                     last_display = display
                     # env = os.environ.copy()
                     ret = subprocess.run(["pkill","kdeconnectd"])
-                    proc = subprocess.Popen(["/home/deck/run_kde_connect.sh", display, "&"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    proc = subprocess.Popen([script_path, display, "&"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     logger.info(proc)
-                    logger.info(f"Starting KDE connect on DISPLAY {last_display}")
+                    # logger.info(f"Starting KDE connect on DISPLAY {last_display}")
             except Exception:
                 logger.info(traceback.format_exc())
             await asyncio.sleep(0.5)
