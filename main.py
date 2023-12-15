@@ -19,7 +19,7 @@ std_err_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-err.log", "w"
 
 class Plugin:
     async def kdeconnect_runner(self):
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         decky_plugin.logger.info("KDE Connecter started")
         script_path = str(Path(decky_plugin.DECKY_PLUGIN_DIR) / "run_kde_connect.sh")
         last_display = None
@@ -33,7 +33,6 @@ class Plugin:
                     if "GAMESCOPE_FOCUSED_APP(CARDINAL)" in line:
                         app_id = line.split(" = ")[1]
 
-                decky_plugin.logger.info(f"app id {app_id}")
                 if app_id is None:
                     await asyncio.sleep(0.5)
                     continue
@@ -43,11 +42,10 @@ class Plugin:
 
                 if display != last_display:
                     last_display = display
-                    # env = os.environ.copy()
                     ret = subprocess.run(["pkill","kdeconnectd"])
                     proc = subprocess.Popen([script_path, display, "&"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     logger.info(proc)
-                    # logger.info(f"Starting KDE connect on DISPLAY {last_display}")
+                    logger.debug(f"Starting KDE connect on DISPLAY {last_display}")
             except Exception:
                 logger.info(traceback.format_exc())
             await asyncio.sleep(0.5)
