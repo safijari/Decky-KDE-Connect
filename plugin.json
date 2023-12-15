@@ -1,0 +1,10 @@
+{
+  "name": "KDE Connect",
+  "author": "Jariullah Safi",
+  "flags": ["debug"],
+  "publish": {
+    "tags": ["control"],
+    "description": "A plugin for running KDE Connect in gamemode",
+    "image": "https://github.com/safijari/Decky-KDE-Connect/raw/main/kde-screenshot.png"
+  }
+}
