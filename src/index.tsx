@@ -42,6 +42,8 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
       </PanelSectionRow>
       <PanelSectionRow>
         <div>You need to pair it first in desktop mode.</div>
+      </PanelSectionRow>
+      <PanelSectionRow>
         <div>Remember to turn it off when you are not using it!</div>
       </PanelSectionRow>
     </PanelSection>
