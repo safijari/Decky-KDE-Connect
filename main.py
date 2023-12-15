@@ -18,6 +18,11 @@ std_out_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-out.log", "w"
 std_err_file = open(Path(decky_plugin.DECKY_PLUGIN_LOG_DIR) / "std-err.log", "w")
 
 class Plugin:
+    _enabled = False
+
+    async def is_enabled(self):
+        return Plugin._enabled
+
     async def kdeconnect_runner(self):
         await asyncio.sleep(10)
         decky_plugin.logger.info("KDE Connecter started")
@@ -26,6 +31,10 @@ class Plugin:
         proc = None
         while True:
             try:
+                if not Plugin._enabled:
+                    last_display = None
+                    await asyncio.sleep(1.0)
+                    continue
                 display = ":0"
                 ret = subprocess.run(["xprop","-d",":0","-root"], capture_output=True)
                 app_id = None
@@ -49,6 +58,13 @@ class Plugin:
             except Exception:
                 logger.info(traceback.format_exc())
             await asyncio.sleep(0.5)
+
+    async def set_enabled(self, enabled):
+        logger.info(enabled)
+        logger.info(type(enabled)) 
+        if Plugin._enabled == True and enabled == False:
+            ret = subprocess.run(["pkill","kdeconnectd"])
+        Plugin._enabled = enabled
 
     async def _main(self):
         try:

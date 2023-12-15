@@ -6,30 +6,42 @@ import {
   MenuItem,
   PanelSection,
   PanelSectionRow,
+  ToggleField,
   Router,
   ServerAPI,
   showContextMenu,
   staticClasses,
 } from "decky-frontend-lib";
-import { VFC, useState } from "react";
+import { VFC, useState, useEffect } from "react";
 import { HiOutlineCamera } from "react-icons/hi";
 import logo from "../assets/logo.png";
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
-  // const [buttonEnabled, setButtonEnabled] = useState<boolean>(true);
-  // const [feedbackText, setFeedbackText] = useState<string>("");
+  const [enabled, setEnabled] = useState<boolean>(false);
 
-  const onClick = async () => {
-      let test = serverAPI;
+  const onClick = async (e) => {
+      serverAPI.callPluginMethod('set_enabled', { enabled: e });
   };
 
+  const initState = async () => {
+    const getIsEnabledResponse = await serverAPI.callPluginMethod('is_enabled', {});
+    setEnabled(getIsEnabledResponse.result as boolean);
+  }
+
+    useEffect(() => {
+            initState();
+    }, []);
   return (
     <PanelSection title="Panel Section">
       <PanelSectionRow>
-        <ButtonItem layout="below" onClick={onClick}>Aggregate!</ButtonItem>
+      <ToggleField
+              label="Enable"
+              checked={enabled}
+              onChange={(e) => { setEnabled(e); onClick(e); }}
+      />
       </PanelSectionRow>
       <PanelSectionRow>
-        <div>test</div>
+        <div>Remember to turn it off when you are not using it</div>
       </PanelSectionRow>
     </PanelSection>
   );
