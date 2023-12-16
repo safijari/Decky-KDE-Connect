@@ -1,1 +1,1 @@
-./assets/run_kde_connect.sh
+./defaults/run_kde_connect.sh
