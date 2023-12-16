@@ -1,5 +1,5 @@
 {
-  "name": "KDE Connect",
+  "name": "kde-connect",
   "version": "0.0.1",
   "description": "A plugin for running KDE Connect in gamemode",
   "scripts": {
