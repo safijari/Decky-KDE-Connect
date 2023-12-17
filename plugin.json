@@ -5,6 +5,6 @@
   "publish": {
     "tags": ["control"],
     "description": "A plugin for running KDE Connect in gamemode",
-    "image": "https://github.com/safijari/Decky-KDE-Connect/raw/main/kde-screenshot.png"
+    "image": "https://github.com/safijari/Decky-KDE-Connect/raw/main/kde_screenshot.png"
   }
 }

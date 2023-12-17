@@ -32,7 +32,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
             initState();
     }, []);
   return (
-    <PanelSection title="Panel Section">
+    <PanelSection>
       <PanelSectionRow>
       <ToggleField
               label="Enable"
